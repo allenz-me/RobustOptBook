@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>鲁棒优化电子书</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="The last theme you&#39;ll ever need. Maybe.">
+    <meta name="generator" content="Hugo 0.89.4" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+    
+    
+      
+
+    
+
+    
+    
+      <link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="鲁棒优化电子书" />
+      <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="鲁棒优化电子书" />
+      
+    
+    
+    <meta property="og:title" content="Posts" />
+<meta property="og:description" content="The last theme you&#39;ll ever need. Maybe." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="/posts/" /><meta property="og:site_name" content="鲁棒优化电子书" />
+
+<meta itemprop="name" content="Posts">
+<meta itemprop="description" content="The last theme you&#39;ll ever need. Maybe."><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Posts"/>
+<meta name="twitter:description" content="The last theme you&#39;ll ever need. Maybe."/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="pb3-m pb6-l bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        鲁棒优化电子书
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Posts 页">
+              Posts
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv3 ph3 ph4-ns">
+        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
+          Posts
+        </h1>
+        
+      </div>
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <article class="pa3 pa4-ns nested-copy-line-height">
+    <section class="cf ph3 ph5-l pv3 pv4-l f4 tc-l center measure-wide lh-copy mid-gray"></section>
+    <section class="flex-ns flex-wrap justify-around mt5">
+      
+        <div class="relative w-100 w-30-l mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/2.%E6%A6%82%E8%A7%88/" class="link black dim">
+        2. 概览
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      概览（Overview） 孙秋壮
+在进行系统的鲁棒优化学习之前，我们进行一些预备知识的回顾。本章将对线性规划、凸优化、锥优化以及风险偏好及其度量进行简要介绍。
+线性规划概览（Linear optimization） 线性规划（LP）是数学规划中形式最为简单的一种模型。一个线性规划可以写作： $$ \begin{array}{rcl} &amp; \min &amp; \pmb{c}^{\top} \pmb{x} \\\ &amp; {\rm s.t.} &amp; \pmb{A}\pmb x \geq \pmb{b}, \\\ &amp; &amp; \pmb{x} \geq \pmb{0}. \\\ \end{array} $$ 可见上式中，目标函数和约束都是线性的形式，所以被叫做“线性规划”。虽然它的形式简单，但线性规划的建模能力非常强大，有很多经典的数学建模问题都可以转化为线性规划，也有很多非线性的函数也可以等价转化为线性规划求解。比如对于如下非线性的规划 $$ \begin{array}{rcl} &amp; \min &amp; f( \pmb{x} ) = \displaystyle\max_{k} { \pmb{d}^{\top}_k \pmb{x} + c_k } \\\ &amp; {\rm s.t.} &amp; \pmb{A} \pmb x \geq \pmb{b}. \end{array} $$ 我们可以等价地将其转化为线性规划 $$ \begin{array}{rcl} &amp; \min &amp; z \\\ &amp; {\rm s.
+    </div>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100 w-30-l mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/3.%E7%BB%8F%E5%85%B8%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/" class="link black dim">
+        3. 经典鲁棒优化
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      经典鲁棒优化（Classical robust optimization） 苏向阳
+不确定性最优化（Optimization under uncertainty） 不确定优化方法 在实际生活中不确定性广泛存在，为了更加合理的对不确定问题进行准确描述，不确定优化逐渐被学界重视。最早在20世纪50年代Bellman、Zadeh和Charnes等人便开始对不确定性优化进行了研究(Chames and Cooper 1959)。 在对不确定优化问题的描述之前，我们先来看一下传统的确定性优化问题： $$ \begin{align} \min &amp; f(\pmb x) \label{equation::detopt}\\\ \text {s.t.} &amp; h(\pmb x) \leq 0 \notag \end{align} $$ 其中，$\pmb{x}$是决策向量，$f(\pmb{x})$为目标函数，$h(\pmb{x})$为约束条件。在$\eqref{equation::detopt}$中，无论是约束条件还是目标函数，其对应的参数都是确定的。然而，在实际问题求解中，模型中一些参数我们很难事先确定。对于一些特定的优化问题而言，一个参数的不同就可能导致原本所求得的最优解变得毫无意义(El-Ghaoui et al. 1998)。为了解决这类问题，不确定性问题的优化求解就变得十分重要。
+随着社会的不断发展，我们所需要求解模型的复杂度不断上升，模型的不确定性也在不断扩大，诸如飞机航班的线路规划、电网的最优调度、物流路径的最优规划等等。在实际生活中，造成模型不确定的根源主要来自以下几个方面：
+1）	数据统计和采集过程造成的数据丢失、数据偏差过大而产生的影响。
+2）	天气等不可抗力因素的干扰，对问题的分析产生的影响。
+3）	认知不全导致现有模型与实际生活中存在偏差产生的影响。
+4）	对于一些难以求解的非凸非线性模型，进行简化描述而产生的影响。
+为了更好地对不确定优化问题进行描述，我们首先给出不确定性优化数学模型的一般表达： $$ \begin{align} \min &amp; f(\pmb{x}, \tilde{\pmb \xi}) \label{equation::uncertain opt}\\\ \text{s.t } &amp; h(\pmb{x}, \tilde{\pmb \xi}) \leq 0, \forall \tilde{\pmb \xi} \in \mathcal{U} \notag \end{align} $$
+在$\eqref{equation::uncertain opt}$中，$\tilde{\pmb \xi}$为不确定参数，$\mathcal{U}$表示不确定参数的集合。为了求解模型$\eqref{equation::uncertain opt}$，以Bellman等人的工作为开端，相关学者提出了一系列的求解优化方法，诸如：随机规划(Berge and Louveaux 2011)、鲁棒优化(Ben-tal et al.
+    </div>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100 w-30-l mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/4.%E5%88%86%E5%B8%83%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/" class="link black dim">
+        4. 分布鲁棒优化
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      分布鲁棒优化（Distributionally robust optimization） 章宇
+现实世界的优化问题指在满足相关约束条件的前提下，确定一组决策变量的值，使预设的目标函数值最优。相关研究成果（理论、模型、算法、应用）在管理科学、金融工程、军事指挥等领域发挥着巨大指导作用，创造了巨大的社会经济价值。
+由于本书定位为入门级、科普级，本章将以优化问题中一类简单但重要的线性优化（亦称线性规划）问题为例，阐述分布鲁棒优化的基本思想、基本模型、基本结论。感兴趣的读者需细读相关文献以获得更深入广泛的理解。
+线性规划问题 $\eqref{ro.mod.lo}$中，决策变量为 $\pmb{x} \in \mathbb{R}^I$，环境参数包括费用向量 $\pmb{a}_0 \in \mathbb{R}^I$、约束条件左端项系数向量 $\pmb{a}_m \in \mathbb{R}^I$、右端项系数 $b_m \in \mathbb{R}$，这些参数为确定值。线性规划可用于解决许多现实问题，例如投资组合优化、生产计划、最短路等问题。 $$ \begin{align} {\min_{\pmb{x}}} &amp; \pmb{a}_0^\top\pmb{x}, &amp;&amp;\label{ro.mod.lo}\\\ \mbox{s.t.} &amp; \pmb{a}_m^\top \pmb{x} \le b_m, &amp;&amp; m \in [M]. \notag \end{align} $$
+现实世界中描述未来发生事件的环境参数在优化/规划/计划阶段往往不确定，例如未来某商品需求量、两地间旅行时长、某股票回报率等。为了让优化结果对现实更具指导意义，在优化模型中考虑环境参数的不确定性至关重要。
+在不确定环境下，$\eqref{ro.mod.lo}$中对于某一 $m \in [M]$ 的约束式变成了 $$ \begin{align} \pmb{a}(\tilde{\pmb \varepsilon})^\top\pmb{x} \leq b(\tilde{\pmb \varepsilon}).\label{dro.con.1} \end{align} $$ 其中，为了阐述方便，忽略下标 $m$；随机变量 $\tilde{\pmb \varepsilon}$ 表示影响环境参数的随机因素（例如，旅行时长受天气、交通灯时长等随机因素影响），假设 $\pmb{a}(\tilde{\pmb \varepsilon})$ 和 $b(\tilde{\pmb \varepsilon})$ 皆为 $\tilde{\pmb \varepsilon}$ 的仿射函数，即 $ \pmb{a}(\tilde{\pmb \varepsilon}) := \pmb{a}^0 + \sum_{j \in [J]}\pmb{a}^j \tilde{\varepsilon}_j, b(\tilde{\pmb \varepsilon}) := b^0 + \sum_{j \in [J]}b^j \tilde{\varepsilon}_j, $ 则有 $$ \pmb{a}(\tilde{\pmb \varepsilon})^\top \pmb{x} - b(\tilde{\pmb \varepsilon}) = \underbrace{(\pmb{a}^{0})^\top\pmb{x} - b^0}_{=y^0(\pmb{x})} + \sum_{j \in [J]}\big(\underbrace{(\pmb{a}^{j})^\top\pmb{x} - b^j}_{=y^j(\pmb{x})}\big)\tilde{\varepsilon}_j = y^0(\pmb{x}) + \pmb{y}(\pmb{x})^\top\tilde{\pmb \varepsilon}.
+    </div>
+  </div>
+</div>
+
+        </div>
+      
+    </section>
+    <ul class="pagination pagination-default">
+      <li class="page-item">
+        <a href="/posts/" aria-label="First" class="page-link" role="button"><span aria-hidden="true">&laquo;&laquo;</span></a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/" aria-label="Previous" class="page-link" role="button"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/" aria-label="Page 1" class="page-link" role="button">1</a>
+      </li>
+      <li class="page-item active">
+        <a href="#" aria-current="page" aria-label="Page 2" class="page-link" role="button">2</a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/page/3/" aria-label="Page 3" class="page-link" role="button">3</a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/page/4/" aria-label="Page 4" class="page-link" role="button">4</a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/page/3/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+      <li class="page-item">
+        <a href="/posts/page/4/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+      </li>
+    </ul></article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="" >
+    &copy;  鲁棒优化电子书 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

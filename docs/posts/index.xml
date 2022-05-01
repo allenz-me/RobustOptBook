@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on 鲁棒优化电子书</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on 鲁棒优化电子书</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 03 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>序言</title>
+      <link>/posts/0preface/</link>
+      <pubDate>Mon, 03 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/0preface/</guid>
+      <description>序言 沈顺璇教授(Prof. Melvyn Sim)会为我们做序</description>
+    </item>
+    
+    <item>
+      <title>编者按</title>
+      <link>/posts/00/</link>
+      <pubDate>Mon, 03 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/00/</guid>
+      <description>《鲁棒优化入门》是应“运筹⋅帷幄”公众号之邀而撰写的鲁棒优化入门读物。版权为全体编者所有。
+本书首先介绍了经典鲁棒优化和分布鲁棒优化的基本内容。随后介绍了多阶段问题及如何运用线性决策规则和鲁棒优化对多阶段问题近似求解。同时也囊括了鲁棒性优化和机器学习等最新的一些研究方向，以及如何使用不同的优化语言包对鲁棒优化模型进行求解。
+本书仅介绍了一些鲁棒优化的最基本的概念和最新的研究进展，旨在对鲁棒优化进行框架性地梳理，为有志于运用鲁棒优化解决实际问题，有志于从事鲁棒优化学术研究的同学提供概念性和框架性的入门。
+本书第一、五章主要由汤勤深，第二章主要由孙秋壮，第三章主要由苏向阳，第四章主要由章宇，第六章主要由陈植，第七章主要由覃含章，第八章主要由汤勤深和熊鹏进行撰写。本书的编写主要以新加坡国立大学沈顺璇（Melvyn SIM）教授上课的PPT为蓝本，并且得到了沈教授的大力支持。在此表示衷心感谢。
+由于编者水平有限，缺点和错误在所难免，敬请批评指正。欢迎读者朋友将意见或建议发到邮箱robustoptbook@gmail.com。
+编者</description>
+    </item>
+    
+    <item>
+      <title>1. 鲁棒优化简介</title>
+      <link>/posts/1.-%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/1.-%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E7%AE%80%E4%BB%8B/</guid>
+      <description>鲁棒优化简介（Introduction） 汤勤深
+根据维基百科，鲁棒优化（Robust Optimization）是最优化理论中的一类用来寻求在不确定（Uncertain)环境中使优化问题具有一定程度的鲁棒性（Robustness）的方法。其中，不确定性可以通过问题的参数或者解的确定性变异（Deterministic variability）来刻画 (Wikipedia, 2021)。也就是说鲁棒优化是用来寻求对不确定性免疫的解的一类方法 (Bertsimas and Sim, 2004).
+在传统的优化模型中，通常假设模型的输入数据是具体的、准确的数值。然而，现实生活中所获得的大部分数据都是具有一定的误差。而有时细微的误差也将导致优化问题的最优解不再最优或者导致原问题不具有可行解（Infeasible）。以NETLIB中题PILOT4为例，其某一约束为： $$ \begin{align*} {\pmb{a}^{\top} \pmb{x} \equiv} &amp;amp; {-15.79081 x_{826}-8.598819 x_{827}-1.88789 x_{828}-1.362417 x_{829}-1.526049 x_{830}}\\\ &amp;amp; { -0.031883 x_{849}-28.725555 x_{850}-10.792065 x_{851}-0.19004 x_{852}-2.757176 x_{853}}\\\ &amp;amp; { -12.290832 x_{854}+717.562256 x_{855}-0.057865 x_{856}-3.785417 x_{857}-78.30661 x_{858}} \\\ &amp;amp; { -122.163055 x_{859}-6.46609 x_{860}-0.48371 x_{861}-0.615264 x_{862}-1.353783 x_{863}}\\\ &amp;amp; { -84.644257 x_{864}-122.459045 x_{865}-43.15593 x_{866}-1.712592 x_{870}-0.401597 x_{871}}\\\ &amp;amp; { +x_{880}-0.946049 x_{898}-0.946049 x_{916} \geq b \equiv 23.387405.} \end{align*} $$ 用Cplex解得这个问题的解为： $$ \begin{array}{lll} x_{826}^{*} = 255.</description>
+    </item>
+    
+    <item>
+      <title>2. 概览</title>
+      <link>/posts/2.%E6%A6%82%E8%A7%88/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2.%E6%A6%82%E8%A7%88/</guid>
+      <description>概览（Overview） 孙秋壮
+在进行系统的鲁棒优化学习之前，我们进行一些预备知识的回顾。本章将对线性规划、凸优化、锥优化以及风险偏好及其度量进行简要介绍。
+线性规划概览（Linear optimization） 线性规划（LP）是数学规划中形式最为简单的一种模型。一个线性规划可以写作： $$ \begin{array}{rcl} &amp;amp; \min &amp;amp; \pmb{c}^{\top} \pmb{x} \\\ &amp;amp; {\rm s.t.} &amp;amp; \pmb{A}\pmb x \geq \pmb{b}, \\\ &amp;amp; &amp;amp; \pmb{x} \geq \pmb{0}. \\\ \end{array} $$ 可见上式中，目标函数和约束都是线性的形式，所以被叫做“线性规划”。虽然它的形式简单，但线性规划的建模能力非常强大，有很多经典的数学建模问题都可以转化为线性规划，也有很多非线性的函数也可以等价转化为线性规划求解。比如对于如下非线性的规划 $$ \begin{array}{rcl} &amp;amp; \min &amp;amp; f( \pmb{x} ) = \displaystyle\max_{k} { \pmb{d}^{\top}_k \pmb{x} + c_k } \\\ &amp;amp; {\rm s.t.} &amp;amp; \pmb{A} \pmb x \geq \pmb{b}. \end{array} $$ 我们可以等价地将其转化为线性规划 $$ \begin{array}{rcl} &amp;amp; \min &amp;amp; z \\\ &amp;amp; {\rm s.</description>
+    </item>
+    
+    <item>
+      <title>3. 经典鲁棒优化</title>
+      <link>/posts/3.%E7%BB%8F%E5%85%B8%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/3.%E7%BB%8F%E5%85%B8%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/</guid>
+      <description>经典鲁棒优化（Classical robust optimization） 苏向阳
+不确定性最优化（Optimization under uncertainty） 不确定优化方法 在实际生活中不确定性广泛存在，为了更加合理的对不确定问题进行准确描述，不确定优化逐渐被学界重视。最早在20世纪50年代Bellman、Zadeh和Charnes等人便开始对不确定性优化进行了研究(Chames and Cooper 1959)。 在对不确定优化问题的描述之前，我们先来看一下传统的确定性优化问题： $$ \begin{align} \min &amp;amp; f(\pmb x) \label{equation::detopt}\\\ \text {s.t.} &amp;amp; h(\pmb x) \leq 0 \notag \end{align} $$ 其中，$\pmb{x}$是决策向量，$f(\pmb{x})$为目标函数，$h(\pmb{x})$为约束条件。在$\eqref{equation::detopt}$中，无论是约束条件还是目标函数，其对应的参数都是确定的。然而，在实际问题求解中，模型中一些参数我们很难事先确定。对于一些特定的优化问题而言，一个参数的不同就可能导致原本所求得的最优解变得毫无意义(El-Ghaoui et al. 1998)。为了解决这类问题，不确定性问题的优化求解就变得十分重要。
+随着社会的不断发展，我们所需要求解模型的复杂度不断上升，模型的不确定性也在不断扩大，诸如飞机航班的线路规划、电网的最优调度、物流路径的最优规划等等。在实际生活中，造成模型不确定的根源主要来自以下几个方面：
+1）	数据统计和采集过程造成的数据丢失、数据偏差过大而产生的影响。
+2）	天气等不可抗力因素的干扰，对问题的分析产生的影响。
+3）	认知不全导致现有模型与实际生活中存在偏差产生的影响。
+4）	对于一些难以求解的非凸非线性模型，进行简化描述而产生的影响。
+为了更好地对不确定优化问题进行描述，我们首先给出不确定性优化数学模型的一般表达： $$ \begin{align} \min &amp;amp; f(\pmb{x}, \tilde{\pmb \xi}) \label{equation::uncertain opt}\\\ \text{s.t } &amp;amp; h(\pmb{x}, \tilde{\pmb \xi}) \leq 0, \forall \tilde{\pmb \xi} \in \mathcal{U} \notag \end{align} $$
+在$\eqref{equation::uncertain opt}$中，$\tilde{\pmb \xi}$为不确定参数，$\mathcal{U}$表示不确定参数的集合。为了求解模型$\eqref{equation::uncertain opt}$，以Bellman等人的工作为开端，相关学者提出了一系列的求解优化方法，诸如：随机规划(Berge and Louveaux 2011)、鲁棒优化(Ben-tal et al.</description>
+    </item>
+    
+    <item>
+      <title>4. 分布鲁棒优化</title>
+      <link>/posts/4.%E5%88%86%E5%B8%83%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/4.%E5%88%86%E5%B8%83%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96/</guid>
+      <description>分布鲁棒优化（Distributionally robust optimization） 章宇
+现实世界的优化问题指在满足相关约束条件的前提下，确定一组决策变量的值，使预设的目标函数值最优。相关研究成果（理论、模型、算法、应用）在管理科学、金融工程、军事指挥等领域发挥着巨大指导作用，创造了巨大的社会经济价值。
+由于本书定位为入门级、科普级，本章将以优化问题中一类简单但重要的线性优化（亦称线性规划）问题为例，阐述分布鲁棒优化的基本思想、基本模型、基本结论。感兴趣的读者需细读相关文献以获得更深入广泛的理解。
+线性规划问题 $\eqref{ro.mod.lo}$中，决策变量为 $\pmb{x} \in \mathbb{R}^I$，环境参数包括费用向量 $\pmb{a}_0 \in \mathbb{R}^I$、约束条件左端项系数向量 $\pmb{a}_m \in \mathbb{R}^I$、右端项系数 $b_m \in \mathbb{R}$，这些参数为确定值。线性规划可用于解决许多现实问题，例如投资组合优化、生产计划、最短路等问题。 $$ \begin{align} {\min_{\pmb{x}}} &amp;amp; \pmb{a}_0^\top\pmb{x}, &amp;amp;&amp;amp;\label{ro.mod.lo}\\\ \mbox{s.t.} &amp;amp; \pmb{a}_m^\top \pmb{x} \le b_m, &amp;amp;&amp;amp; m \in [M]. \notag \end{align} $$
+现实世界中描述未来发生事件的环境参数在优化/规划/计划阶段往往不确定，例如未来某商品需求量、两地间旅行时长、某股票回报率等。为了让优化结果对现实更具指导意义，在优化模型中考虑环境参数的不确定性至关重要。
+在不确定环境下，$\eqref{ro.mod.lo}$中对于某一 $m \in [M]$ 的约束式变成了 $$ \begin{align} \pmb{a}(\tilde{\pmb \varepsilon})^\top\pmb{x} \leq b(\tilde{\pmb \varepsilon}).\label{dro.con.1} \end{align} $$ 其中，为了阐述方便，忽略下标 $m$；随机变量 $\tilde{\pmb \varepsilon}$ 表示影响环境参数的随机因素（例如，旅行时长受天气、交通灯时长等随机因素影响），假设 $\pmb{a}(\tilde{\pmb \varepsilon})$ 和 $b(\tilde{\pmb \varepsilon})$ 皆为 $\tilde{\pmb \varepsilon}$ 的仿射函数，即 $ \pmb{a}(\tilde{\pmb \varepsilon}) := \pmb{a}^0 + \sum_{j \in [J]}\pmb{a}^j \tilde{\varepsilon}_j, b(\tilde{\pmb \varepsilon}) := b^0 + \sum_{j \in [J]}b^j \tilde{\varepsilon}_j, $ 则有 $$ \pmb{a}(\tilde{\pmb \varepsilon})^\top \pmb{x} - b(\tilde{\pmb \varepsilon}) = \underbrace{(\pmb{a}^{0})^\top\pmb{x} - b^0}_{=y^0(\pmb{x})} + \sum_{j \in [J]}\big(\underbrace{(\pmb{a}^{j})^\top\pmb{x} - b^j}_{=y^j(\pmb{x})}\big)\tilde{\varepsilon}_j = y^0(\pmb{x}) + \pmb{y}(\pmb{x})^\top\tilde{\pmb \varepsilon}.</description>
+    </item>
+    
+    <item>
+      <title>5. 多阶段问题与线性决策规则</title>
+      <link>/posts/5.%E5%A4%9A%E9%98%B6%E6%AE%B5%E9%97%AE%E9%A2%98%E4%B8%8E%E7%BA%BF%E6%80%A7%E5%86%B3%E7%AD%96%E8%A7%84%E5%88%99/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/5.%E5%A4%9A%E9%98%B6%E6%AE%B5%E9%97%AE%E9%A2%98%E4%B8%8E%E7%BA%BF%E6%80%A7%E5%86%B3%E7%AD%96%E8%A7%84%E5%88%99/</guid>
+      <description>多阶段问题与线性决策规则（Multi-stage problem and linear decision rule） 汤勤深，陈植
+第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。
+针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。
+在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。
+注：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。
+随机规划（Stochastic programming） \label{sp_intro} 为了更好地理解随机规划，我们举例如下。
+示例1 单阶段库存管理模型 \label{example::single period inventory management}
+小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为： $$ \pi(x, d) = p\min\{x, d\} - cx - b(d- x)^+ - h(x - d)^+. $$
+小王想最大化他的期望利润，也即他将要解以下问题: $$ \begin{align} \max\ &amp;amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\ \mathrm{s.t.}\ &amp;amp; x \geq 0\notag \notag \end{align} $$
+示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题: $$ \begin{align} \min\ &amp;amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb \xi})}, \label{model::SP model1}\\\ \mathbf{s.</description>
+    </item>
+    
+    <item>
+      <title>7. 鲁棒优化与机器学习</title>
+      <link>/posts/7.%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/7.%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</guid>
+      <description>鲁棒优化与机器学习（Machine learning） 覃含章
+\textcolor{magenta}{分布式鲁棒贝叶斯学习\cite{kirschner2020distributionally}}
+本章中我们介绍鲁棒优化与机器学习相结合的一些研究的最新进展。
+从鲁棒优化角度看回归模型（Regression）: 正则性（Regularization）和鲁棒性（Robustness） 我们知道，著名的LASSO算法实际上是求解带有$L_1$正则项的线性回归模型。即，一般是考虑求解这样一个优化问题 $$ \min_{\pmb{\beta}} | \pmb{y} -\pmb{X} \pmb{\beta} |_2+\lambda |\pmb{\beta}|_1, $$ 其中$\pmb{X}\in \mathbb{R}^{M\times N}$是描述数据特征（feature）的矩阵，$\pmb{y}\in \mathbb{R}^M$是描述数据标签（label）的向量，$\lambda&amp;gt;0$是正则项前的系数。在一些限制条件和假设下，可以证明存在某个自然数$k$,使得LASSO等价于求解如下问题（我们使用$|\cdot |_0$ 表示一个向量非零元素的个数，即$|\pmb{\beta}|_0=\text{card}(\{ i:\pmb{\beta}_i\neq 0 \})$）： $$ \begin{align*} \min_{\pmb{\beta}} &amp;amp; |\pmb{y}-\pmb{X}\pmb{\beta}|_2 \\\ \text{s.t. } &amp;amp; |\pmb{\beta}|_0 \leq k. \end{align*} $$ 也就是说在这种情况下LASSO所得到的解是稀疏（sparse）的。这里我们主要考虑这样一种非概率的统计模型，即我们认为我们只能得到$\pmb{X}$的一个带有误差的样本$ \pmb{X}&#39;$。我们利用鲁棒优化的思想，认为$ \pmb{X}&#39;=\pmb{X}+\pmb{\Delta}$，而$\pmb{\Delta}\in \mathcal{U}\subset \mathbb{R}^{M\times N}$，这里的$\mathcal{U}$就是我们的不确定集合（uncertainty set），注意这个集合是非随机的（deterministic）的。我们因此就可以考虑这样一个鲁棒线性回归问题： $$ \min_{\pmb{\beta}} \max_{\pmb{\Delta}\in \mathcal{U}} | \pmb{y} -(\pmb{X}+\pmb{\Delta}) \pmb{\beta} |_2. $$ 这个鲁棒线性回归是个什么意思呢，也就是说我们现在优化的时候，所选择的$\pmb \beta$是最小化了不确定集里最差的那个$\pmb X&#39;$，即我们要让“最坏情况”下的损失函数值最小。而在传统的LASSO或者线性回归中，我们的目标可以看成是要让期望的损失函数值最小。下面先初步解答如下问题：在线性回归模型中，我们什么时候可以将正则性和鲁棒性，这一个来自统计/机器学习，一个来自优化理论的性质等同看待？这里就以回归模型中最出名的脊回归（Ridge Regression）和LASSO为例。 $$ \begin{align} &amp;amp; \min_{\pmb{\beta}}|\pmb y - \pmb X\pmb \beta|_2+\lambda|\pmb \beta|_2=\min_{\pmb \beta}\max_{\pmb \Delta\in \mathcal{U}_{\text{RLS}}} | \pmb y - (\pmb X + \pmb \Delta) \pmb \beta|_2,\label{equ:RLS} \\\ &amp;amp; \min_{\pmb{\beta}}|\pmb y - \pmb X\pmb \beta|_2 +\lambda |\pmb \beta|_1 =\min_{\pmb \beta}\max_{\pmb \Delta\in \mathcal{U}_{\text{LASSO}}} | \pmb y - (\pmb X+\pmb \Delta) \pmb \beta|_2\label{equ:LASSO}.</description>
+    </item>
+    
+    <item>
+      <title>8. 鲁棒优化模型求解</title>
+      <link>/posts/8.%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E6%A8%A1%E5%9E%8B%E6%B1%82%E8%A7%A3/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/8.%E9%B2%81%E6%A3%92%E4%BC%98%E5%8C%96%E6%A8%A1%E5%9E%8B%E6%B1%82%E8%A7%A3/</guid>
+      <description>鲁棒优化模型求解（Model implementation） 汤勤深，熊鹏
+随着鲁棒优化方法的价值不断地被学界和业界发现，出现了越来越多的语言包支持鲁棒优化模型的直接求解。其中，有基于Julia的JuMPeR (Dunning, Huchette, and Lubin, 2017)，基于C语言的ROC (Bertsimas, Sim, and Zhang, 2019)，基于Matlab的XProg和YALMIP以及XProg的升级版RSOME。JUMPeR和YALMIP主要支持经典鲁棒优化模型，而ROC和RSOME既支持传统鲁棒优化模型也支持分布式鲁棒优化模型，并且还可以比较简洁地定义各种决策规则。在本章中，我们将简要介绍如何在JUMPeR和YALMIP上对鲁棒优化模型求解而着重介绍如何用RSOME求解不同形式的鲁棒优化模型。由于编码原因，本章代码块部分中的$\xi$由$xi$进行表示。
+鲁棒模型在JuMPeR上的实现（Implementation on JuMPeR） JuMPeR全称Robust Optimization with JuMP。是基于Julia中JuMP而开发的一个用来求解鲁棒优化模型的语言包。 Julia是一门免费和开源的编程语言，于2018年8月1日正式发布。
+JuMPeR可以处理大部分的经典鲁棒优化问题： $$ \begin{aligned} \min \ &amp;amp; g( \pmb x)\label{model::JuMPeR RO}\\\ \mathbf{s.t.}\ &amp;amp; f_i( \pmb x,\tilde{\pmb \xi}) \leq 0,, \forall \tilde{\pmb \xi} \in \mathcal{U}:= {\tilde{\pmb \xi} : h( \pmb \xi) \leq 0}, i \in [I], \end{aligned} $$ 其中，在JuMPeR中，鲁棒优化模型不能包含以下几种情况：
+ 不能有二次项，也即不能有变量乘变量（$x\mbox{*}y$）,不确定项乘不确定项（$\tilde{xi}\mbox{*}\tilde{\varepsilon}$）。但是允许不确定项和变量相乘（$x\mbox{*}\tilde{\xi}$）。 目标函数中不能包含不确定项。如果有的话，通过引入辅助变量将其转为约束条件。 在有不确定性的约束中不支持宏（Macros），所以必须使用“addConstraint”。  使用JuMPeR时，先用
+ using JuMPeR 申明调用JuMPeR，并且用
+ m = RobustModel() 来定义模型$m$。之后可以定义变量“@defVar()”、约束“addConstraint()”、不定集“@defUnc()”，或者设定目标函数“setObjective()”。举个栗子：</description>
+    </item>
+    
+    <item>
+      <title>9. 总结</title>
+      <link>/posts/9.conclusion/</link>
+      <pubDate>Sun, 02 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/9.conclusion/</guid>
+      <description>\chapter{总结及展望（Conclusion and future research）} \begin{center} \chapterauthor{汤勤深} \end{center}</description>
+    </item>
+    
+  </channel>
+</rss>

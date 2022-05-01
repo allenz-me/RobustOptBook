@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>5. 多阶段问题与线性决策规则 | 鲁棒优化电子书</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="多阶段问题与线性决策规则（Multi-stage problem and linear decision rule） 汤勤深，陈植
+第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。
+针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。
+在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。
+注：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。
+随机规划（Stochastic programming） \label{sp_intro} 为了更好地理解随机规划，我们举例如下。
+示例1 单阶段库存管理模型 \label{example::single period inventory management}
+小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为： $$ \pi(x, d) = p\min\{x, d\} - cx - b(d- x)^&#43; - h(x - d)^&#43;. $$
+小王想最大化他的期望利润，也即他将要解以下问题: $$ \begin{align} \max\ &amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\ \mathrm{s.t.}\ &amp; x \geq 0\notag \notag \end{align} $$
+示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题: $$ \begin{align} \min\ &amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb \xi})}, \label{model::SP model1}\\\ \mathbf{s.">
+    <meta name="generator" content="Hugo 0.89.4" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="5. 多阶段问题与线性决策规则" />
+<meta property="og:description" content="多阶段问题与线性决策规则（Multi-stage problem and linear decision rule） 汤勤深，陈植
+第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。
+针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。
+在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。
+注：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。
+随机规划（Stochastic programming） \label{sp_intro} 为了更好地理解随机规划，我们举例如下。
+示例1 单阶段库存管理模型 \label{example::single period inventory management}
+小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为： $$ \pi(x, d) = p\min\{x, d\} - cx - b(d- x)^&#43; - h(x - d)^&#43;. $$
+小王想最大化他的期望利润，也即他将要解以下问题: $$ \begin{align} \max\ &amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\ \mathrm{s.t.}\ &amp; x \geq 0\notag \notag \end{align} $$
+示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题: $$ \begin{align} \min\ &amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb \xi})}, \label{model::SP model1}\\\ \mathbf{s." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/5.%E5%A4%9A%E9%98%B6%E6%AE%B5%E9%97%AE%E9%A2%98%E4%B8%8E%E7%BA%BF%E6%80%A7%E5%86%B3%E7%AD%96%E8%A7%84%E5%88%99/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-05-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-02T00:00:00+00:00" /><meta property="og:site_name" content="鲁棒优化电子书" />
+
+<meta itemprop="name" content="5. 多阶段问题与线性决策规则">
+<meta itemprop="description" content="多阶段问题与线性决策规则（Multi-stage problem and linear decision rule） 汤勤深，陈植
+第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。
+针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。
+在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。
+注：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。
+随机规划（Stochastic programming） \label{sp_intro} 为了更好地理解随机规划，我们举例如下。
+示例1 单阶段库存管理模型 \label{example::single period inventory management}
+小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为： $$ \pi(x, d) = p\min\{x, d\} - cx - b(d- x)^&#43; - h(x - d)^&#43;. $$
+小王想最大化他的期望利润，也即他将要解以下问题: $$ \begin{align} \max\ &amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\ \mathrm{s.t.}\ &amp; x \geq 0\notag \notag \end{align} $$
+示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题: $$ \begin{align} \min\ &amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb \xi})}, \label{model::SP model1}\\\ \mathbf{s."><meta itemprop="datePublished" content="2021-05-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-05-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1765">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="5. 多阶段问题与线性决策规则"/>
+<meta name="twitter:description" content="多阶段问题与线性决策规则（Multi-stage problem and linear decision rule） 汤勤深，陈植
+第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。
+针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。
+在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。
+注：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。
+随机规划（Stochastic programming） \label{sp_intro} 为了更好地理解随机规划，我们举例如下。
+示例1 单阶段库存管理模型 \label{example::single period inventory management}
+小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为： $$ \pi(x, d) = p\min\{x, d\} - cx - b(d- x)^&#43; - h(x - d)^&#43;. $$
+小王想最大化他的期望利润，也即他将要解以下问题: $$ \begin{align} \max\ &amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\ \mathrm{s.t.}\ &amp; x \geq 0\notag \notag \end{align} $$
+示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题: $$ \begin{align} \min\ &amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb \xi})}, \label{model::SP model1}\\\ \mathbf{s."/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        鲁棒优化电子书
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Posts 页">
+              Posts
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+  <script>
+    if (typeof MathJax === 'undefined') {
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/mhchem']
+            },
+            
+            tex: {
+                inlineMath: {'[+]': [['$', '$']]},
+                tags: 'ams',
+                packages: {'[+]': ['mhchem']}
+            }
+        };
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+            script.defer = true;
+            document.head.appendChild(script);
+        })();
+    } else {
+        MathJax.texReset();
+        MathJax.typeset();
+    }
+</script>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POSTS
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">5. 多阶段问题与线性决策规则</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2021-05-02T00:00:00Z">五月 2, 2021</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h1 id="多阶段问题与线性决策规则multi-stage-problem-and-linear-decision-rule">多阶段问题与线性决策规则（Multi-stage problem and linear decision rule）</h1>
+<p>汤勤深，陈植</p>
+<p>第三章和第四章分别介绍了经典鲁棒优化和分布鲁棒优化的方法和模型。然而这些方法和模型主要针对单阶段（Single stage）的问题。而企业或者决策者面对的问题中，很大一部分都是多阶段的（Multi-stage）。也即，决策者需要在一定的时间内，按时间顺序进行多个决策，且决策时只知过去已发生的随机变量（Random variable）而无法预知未来的。多阶段问题的这些特性，使得对相应问题的建模和求解特别复杂。在优化领域，一般是用随机规划或者动态规划进行建模和求解。然而，随机规划和动态规划都遭受“维度诅咒”（Curse of dimensionality）。</p>
+<p>针对随机规划和动态规划的这个致命缺点，鲁棒优化用一些决策规则（decision rule）进行规避。现有的决策规则已经可以达到很好的近似效果，甚至在某些条件下有一些决策规则可以达到最优。</p>
+<p>在这一章，我们将聚焦于如何用这些决策规则对多阶段问题（主要是两阶段问题）进行求解。在此之前，我们先着重介绍两阶段的随机规划问题。</p>
+<p><strong>注</strong>：正如后面会讨论，决策规则近来越来越多地被改称为近似规则（Recourse approximation）。如若称为决策规则，则有后面阶段的决策将根据规则直接得到之嫌。而实际上，如果直接使用决策规则对后面阶段决策进行决策，其效果非常不可控。大多时候，模型会表现非常差。在模型的实施过程中，往往都是用滚动法（Rolling horizon），也即，在知道这一期的不确定性之后，将现在系统的状态当成初始状态，重新对模型进行求解，以获得下一期的最优决策。从这个角度来说，我们使用一定的规则去\textit{近似}未来的决策和不确定性之间的关系，从而达到简化模型的效果。</p>
+<h2 id="随机规划stochastic-programming">随机规划（Stochastic programming）</h2>
+<p>\label{sp_intro}
+为了更好地理解随机规划，我们举例如下。</p>
+<p><strong>示例1</strong>
+单阶段库存管理模型 \label{example::single period inventory management}</p>
+<p>小王前不久在小区开了一个小卖部。他发现，小区对苹果的需求$\tilde{d}$满足分布$F(\cdot)$。他每天需要决定向20里外小张定$x$斤苹果。每斤苹果的进货单价为$c$，销售价格为$p$。若库存不足,也即真实需求$d$大于订货量$x$，居民可以先下单，等有货了再送过去。针对这种情况，小王一般会给一定的折扣。折算下来，每一斤苹果将增加$b$的成本。而如果订货量太多，也即$x - d \geq 0$，苹果可能会变质，折算下来一斤苹果将增加$h$的成本。小王的利润为：
+$$
+\pi(x, d) = p\min\{x, d\} - cx - b(d- x)^+ - h(x - d)^+.
+$$</p>
+<p>小王想最大化他的期望利润，也即他将要解以下问题:
+$$
+\begin{align}
+\max\ &amp; \mathbb{E}_{\mathbb{P}}{\pi(x,\tilde{d})} \label{model::inventory management}\\\
+\mathrm{s.t.}\ &amp; x \geq 0\notag \notag
+\end{align}
+$$</p>
+<p>示例$\ref{example::single period inventory management}$就是一个在商业环境中随处可见的随机规划问题：在已知随机分布和满足一定的约束的情况下，进行决策使得期望利润最大化。一般地，随机规划关注以下问题:
+$$
+\begin{align}
+\min\ &amp; \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb  \xi})}, \label{model::SP model1}\\\
+\mathbf{s.t.}\ &amp;  \mathbb{E}_{\mathbb{P}}{f_i(\pmb x,\tilde{\pmb \xi})} \leq 0,  i\in[I].\notag
+\end{align}
+$$
+其中，$\tilde{\pmb{\xi}}$为随机变量。</p>
+<p>示例$\ref{example::single period inventory management}$是一个单阶段的问题。但是，如果我们把卖多少苹果，$\min\{x,d\}$，当成决策$y$，那示例$\ref{example::single period inventory management}$就变成了一个两阶段的问题：第一阶段，决定定多少苹果，之后观测到需求；第二阶段，决定卖多少苹果。也即，模型$\eqref{model::inventory management}$可以写成
+$$
+\begin{align*}
+\max\ &amp; -c x - b\mathbb{E}_{\mathbb{P}}{\tilde{d}} - h x + \mathbb{E}_{\mathbb{P}}{g(x,\tilde{d})}\\\
+\mathrm{s.t.}\ &amp; x \geq 0
+\end{align*}
+$$
+其中，
+$$
+\begin{align*}
+g(x, d) = \max\ &amp; (p + b + h)y\\\
+\mathrm{s.t.}\ &amp; y \geq x,\\\
+&amp; y \geq d\notag.
+\end{align*}
+$$
+此模型可归类于由<a href="https://www.jstor.org/stable/2627159">Dantzig, 1995</a>首先引入的经典的（线性）两阶段随机规划问题（two stage stochastic programming）： 第一阶段的决策变量为$\pmb x\in \mathbb{R}^{N_1}$，也称为“现时决策（Here-and-now decision）”。不失一般性，假设$\pmb x$的可行集为$\mathcal{X} = \{\pmb x:\pmb{Ax} = \pmb b,  \pmb x \geq \pmb 0\}$。与$\pmb x$相关的成本参数$\pmb c \in \mathbb{R}^{N_1}$。之后，随机量$\tilde{\pmb  \xi}\in \mathcal{W} \in \mathbb{R}^{I_1}$实现为$\pmb \xi$。其中$\mathcal{W}$为$ \tilde{\pmb \xi}$的支撑集。第二阶段决策变量为$\pmb y$，也称“等待决策（Wait-and-see decision）”。其相应的成本参数为$\pmb q\in \mathbb{R}^{N_2}$。此两阶段随机规划问题模型如下：
+$$
+\begin{align}
+\min\ &amp; \pmb c^{\top} \pmb x + \mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb  \xi})},\label{model::Two Stage SP model1} \\\
+\mathbf{s.t.}\ &amp;  \pmb{A}\pmb x = \pmb b;\notag \\\
+&amp; \pmb x \geq \pmb 0,\notag
+\end{align}
+$$
+其中
+$$
+\begin{align}
+g(\pmb x,\pmb \xi) = \min\ &amp; \pmb q^{\top}\pmb{y},\label{model::Two Stage SP model&ndash;dependent} \\\
+\mathbf{s.t.}\ &amp;  \pmb{T}(\pmb \xi)\pmb x + \pmb{W}\pmb y = \pmb h(\pmb \xi);\notag\\\
+&amp; \pmb y \geq \pmb 0.\notag
+\end{align}
+$$
+模型$\eqref{model::Two Stage SP model&ndash;dependent}$中，$\pmb{T} \in \mathcal{R}^{I_1, M\times N_1}, \pmb h \in \mathcal{R}^{I_1,M}$是$\pmb \xi \in \mathcal{W}$的函数。在接下来的讨论中，我们假设他们仿射依赖于$\pmb \xi \in \mathbb{R}^{I_1}$：
+$$
+\pmb{T}(\pmb \xi) = \pmb T^0 + \sum_{i\in[I_1]}\pmb T^i\pmb \xi_i, \quad \pmb{b}(\pmb \xi) = \pmb b^0 + \sum_{i\in[I_1]}\pmb b^i\pmb \xi_i,
+$$
+其中，$\pmb T^0,\ldots,\pmb T^{I_1} \in \mathbb{R}^{M \times N_1}$，$\pmb b^0,\ldots,\pmb b^{I_1} \in \mathbb{R}^{M}$。</p>
+<p>另外，矩阵$\pmb W$称为递归矩阵（Recourse matrix）。第二阶段的模型$\eqref{model::Two Stage SP model&ndash;dependent}$不一定总是有可行解。但是如果$\pmb W$是完全递归的（Complete recourse）&mdash;对任意的$\pmb z \in \mathbb{R}^M$，存在$\pmb y\in \mathbb{R}^{N_2}$使得$\pmb W \pmb y \geq \pmb z$&mdash;那么可以保证对于所有$\pmb x\in \mathbb{R}^{N_1}$和$\pmb \xi \in \mathbb{R}^{I_1}$，模型$\eqref{model::Two Stage SP model&ndash;dependent}$都有可行解。然而完全递归的假设过于苛刻，有些问题不一定具有这个性质。通常情况下，我们会假设模型$\eqref{model::Two Stage SP model&ndash;dependent}$对于所有的$\pmb x\in \mathcal{X}$和$\pmb \xi \in \mathcal{W}$都有可行解，也即模型$\eqref{model::Two Stage SP model&ndash;dependent}$具有相对完全递归（Relatively complete recourse）。</p>
+<p>然而，两阶段随机模型具有以下难点:</p>
+<ol>
+<li>大量变量和约束。</li>
+<li>难以获得$\tilde{\pmb \xi}$的集中分布。</li>
+<li>难以评估（Evaluate）目标函数。尤其当$\tilde{\pmb\xi}$的维度较大时。</li>
+<li>难以获得一个第一阶段的可行解$\pmb x$能够保证第二阶段的解$\pmb y$也是可行的。</li>
+</ol>
+<p>以上难点，使得最简单的两阶段随机规划问题是一个$\# P$-难的问题；而如果阶段大于2，这个问题则是一个$\mathrm{PSPACE}$-难的问题<a href="https://link.springer.com/article/10.1007/s10107-005-0597-0">(Dyer and Stougie, 2006)</a>。为了部分解决以上的这些问题，我们接下来介绍动态鲁棒优化和近似决策规则。</p>
+<h2 id="动态鲁棒优化dynamic-robust-optimization">动态鲁棒优化（Dynamic robust optimization）</h2>
+<p>在两阶段随机规划问题\eqref{model::Two Stage SP model1}中，假如$ \tilde{\pmb \xi}$的分布$\mathbb{P}$的具体分布未知，但是可以构建某个模糊集$\mathcal{P}$使得真实的分布在这个集合中，那么我们可以得到以下动态鲁棒优化模型：
+$$
+\begin{align}
+\min\ &amp; \pmb c^{\top} \pmb x + \sup_{\mathbb{P} \in \mathcal{P}}\mathbb{E}_{\mathbb{P}}{g(\pmb x,\tilde{\pmb  \xi})}, \label{model::Two Stage Robust model}\\\
+\mathbf{s.t.}\ &amp;  \pmb{A}\pmb x = \pmb b;\notag \\\
+&amp; \pmb x \geq \pmb 0,\notag
+\end{align}
+$$
+其中
+$$
+\begin{align*}
+g(\pmb x,\pmb \xi) = \min\ &amp; \pmb q^{\top}\pmb{y},\\\
+\mathbf{s.t.}\ &amp;  \pmb{T}(\pmb \xi)\pmb x + \pmb{W}\pmb y = \pmb h(\pmb \xi);\\\
+&amp; \pmb y \geq \pmb 0.
+\end{align*}
+$$
+我们可以等价地把模型$\eqref{model::Two Stage Robust model}$写成：
+$$
+\begin{align}
+Z^* = \min\ &amp; \pmb c^{\top} \pmb x + \sup_{\mathbb{P} \in \mathcal{P}}\mathbb{E}_{\mathbb{P}}{\pmb q^{\top}\pmb{y}(\tilde{\pmb  \xi})}, \label{model::Two Stage Robust model1} \\\
+\mathbf{s.t.}\ &amp;  \pmb A \pmb x = \pmb b;\notag\\\
+&amp;\pmb{T}(\pmb \xi)\pmb x + \pmb{W}\pmb y(\pmb \xi) = \pmb h(\pmb \xi)  \forall \pmb \xi \in \mathcal{W};\notag\\\
+&amp;\pmb y \in \mathcal{R}^{I_1, N_2};\notag\\\
+&amp;\pmb x \geq \pmb 0.\notag
+\end{align}
+$$
+然而，模型$\eqref{model::Two Stage Robust model1}$一般来说是不可解的，因为$\pmb y$是$\pmb \xi $的任意一个函数。如果我们假设$\pmb y$和$\pmb\xi$之间的映射是可知的，比如是仿射或者二次的，那么模型$\eqref{model::Two Stage Robust model1}$是否可能有解呢？答案是肯定的。</p>
+<p><strong>注</strong>：
+模型$\eqref{model::Two Stage SP model1}$是一个分布式鲁棒优化的两阶段模型。由第三章和第四章可知，当模糊集只包含随机量的支撑集时，分布式鲁棒优化模型退化成传统的鲁棒优化模型。因此，这一章节只讨论分布式鲁棒优化下的多阶段问题和线性决策规则。</p>
+<h2 id="线性决策规则linear-decision-rule">线性决策规则（Linear decision rule）</h2>
+<p>线性决策规则（LDR）是一种在动态优化模型中，假设当前阶段的决策\textbf{线性}依赖于（之前阶段）随机量的决策机制。也即，这是对决策量和随机量之间复杂关系的一种近似。相对应的，也有非线性的决策规则，比如二次决策规则（Quadratic decision rule, <a href="https://www2.isye.gatech.edu/~nemirovs/FullBookDec11.pdf">Ben-tal et al. 2009</a>）和多项式决策规则（Polynomial decision rules, <a href="https://ieeexplore.ieee.org/document/5986692">Bertsimas et al., 2011</a>）。</p>
+<p>决策规则的提出旨在降低随机规划问题中的维度。有关于早期决策规则和随机规划结合的文献可参考<a href="https://link.springer.com/article/10.1007%2FBF01585511">Garstka and Wets</a>等人1974年写的综述。然而，由于此近似所得模型过于保守而被弃用。
+之后，<a href="https://link.springer.com/article/10.1007/s10107-003-0454-y">Ben-tal et al., 2004</a>创造性地将LDR和鲁棒优化相结合，使得线性决策规则焕发出勃勃生机。 具体地，对于模型$\eqref{model::Two Stage Robust model1}$我们可以假设$\pmb y$是$\pmb \xi$的仿射函数，
+$$
+\pmb{y}(\pmb \xi) = \pmb y^0 + \sum_{i\in[I_1]}\pmb y_i^1\xi_i.
+$$
+不失一般性，我们定义以下集合
+$$
+\mathcal{L}^{I,N} = \bigg\{\pmb y \in \mathcal{R}^{I,N} \Big| \begin{array}{l}
+\exists \pmb y^0, \pmb y_i^1, i \in [I_1]:\\\
+\pmb y (\pmb \xi) = \pmb y^0 + \sum_{i\in[I_1]} \pmb y_i^1 \xi_i
+\end{array}\bigg\}.
+$$
+在线性规则下，模型$\eqref{model::Two Stage Robust model1}$可以写成
+$$
+\begin{align}
+Z^L = \min\ &amp; \pmb c^{\top} \pmb x + \sup_{\mathbb{P} \in \mathcal{P}}\mathbb{E}_{\mathbb{P}}{\pmb q^{\top}\pmb{y}(\tilde{\pmb  \xi})},\label{model::Two Stage Robust model LDR}\\\
+\mathbf{s.t.}\ &amp;  \pmb A \pmb x = \pmb b;\notag\\\
+&amp;\pmb{T}(\pmb \xi)\pmb x + \pmb{W}\pmb y(\pmb \xi) = \pmb h(\pmb \xi)  \forall \pmb \xi \in \mathcal{W};\notag\\\
+&amp;\pmb y \in \mathcal{L}^{I_1,N_2},\pmb x \geq \pmb 0.\notag
+\end{align}
+$$</p>
+<p>由此，我们可以得到模型$\eqref{model::Two Stage Robust model1}$的一个上界。</p>
+<p><strong>定理</strong> {theorem}\label{theorem::upper bound}
+$$
+Z^{*} \leq Z^L.
+$$</p>
+<p>既然是上界，那么很自然的问题是，这个近似的效果如何？近似之后的问题和原问题的差距多大？什么条件下这两个问题是一样的，也即，什么条件可以保证线性决策规则是最优的？对于前两个问题，据笔者所知，暂时没有一般性的结论。而对于第三个问题，<a href="https://pubsonline.informs.org/doi/10.1287/opre.2013.1172">Iancu, Sharma, and Sviridenko, 2013</a>给出了模糊集中只包含随机量的支撑集时，线性决策规则最优的条件和技术性假设。 <a href="https://pubsonline.informs.org/doi/10.1287/moor.1100.0444">Bertsimas, Iancu, and Parrilo, 2010</a>和<a href="https://link.springer.com/article/10.1007/s10107-011-0444-4">Bertsimas and Goyal, 2012</a>探讨了某几种特殊的多阶段问题中LDR最优的条件。 而对于下一小节要介绍的拓展式线性决策规则（ELDR），<a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2017.2952">Bertsimas, Sim, and Zhang, 2019</a>证明了当第二阶段的决策变量为一维时，ELDR为最优。而<a href="https://pubsonline.informs.org/doi/10.1287/msom.2018.0734">He, Hu, Zhang, 2020</a>证明了ELDR对于车辆调度问题（Vehicle repositioning problem)在满足一定的技术性假设条件下，对于任意维度的递归决策都是最优的。对于第五小节要介绍的情景仿射递归近似规则，<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3305039">Perakis et al., 2020</a>证明了在三阶段的定价和库存模型中，当只考虑一个产品时，
+事件式近似法则是最优的。而对于多个产品的情况，从数值例子来看，也接近于最优。</p>
+<p>LDR的运用使得多阶段的鲁棒优化问题受到了越来越多的学者的关注。然而，线性决策规则有一个很明显的缺点，近似模型太保守或者容易使得模型不可解。比如，<a href="https://pubsonline.informs.org/doi/10.1287/opre.1070.0457">Chen et al., 2008</a>指出，当$\pmb \xi$的支撑集$\mathcal{W} = (-\infty, + \infty)$时，
+$$
+\pmb{y}(\pmb \xi) = \pmb y^0 + \sum_{i\in[I_1]}\pmb y_i^1\xi_i \geq \pmb 0,
+$$
+可以得到$\pmb y_i^1 = \pmb 0, \forall i \in [I_1]$。此时，$\pmb y(\pmb \xi ) = \pmb y^0$是静态的（Static policy），而不是动态地依赖于$\pmb \xi$。 这就很容易导致所得的解过于保守或者模型不可解。比如考虑如下的随机优化问题：
+$$
+\begin{align*}
+\min &amp; \mathbb{E}_{\mathbb{P}}{y_1(\pmb \xi) + y_2(\pmb \xi)}\\\
+\textrm{s.t.} &amp; y_1(\pmb \xi) - y_2(\pmb \xi) = h(\pmb \xi);\\\
+&amp; y_1(\pmb \xi) \geq 0, y_2(\pmb \xi) \geq 0.
+\end{align*}
+$$
+如果$\pmb \xi$的支撑集$\mathcal{W} = (-\infty, + \infty)$，那么$y_1(\pmb \xi) = y_1^0, y_2(\pmb \xi) = y_2^0$。而此时，等式$y_1(\pmb \xi) - y_2(\pmb \xi) = h(\pmb \xi)$将无法被满足。有鉴于此，<a href="https://pubsonline.informs.org/doi/10.1287/opre.1070.0457">Chen et al., 2008</a>提出了偏转线性决策规则（Deflected linear decision rule, DLDR）和分离线性决策规则（Segregated linear decision rule,SLDR）。<a href="https://pubsonline.informs.org/doi/10.1287/opre.1090.0746">See and Sim, 2010</a>提出了截断线性决策规则（Truncated linear decision rule），<a href="https://pubsonline.informs.org/doi/10.1287/opre.1090.0795">Goh and Sim, 2010</a>则将DLDR和SLDR扩展到双偏转线性决策规则（Bideflected linear decision rule）和广义分离线性决策规则（Generalized segregated linear decision rule）。</p>
+<p>对于LDR在多阶段问题中的更多的运用，读者可以阅读<a href="https://pubsonline.informs.org/doi/10.1287/educ.2015.0139">Delage and Iancu, 2015</a>和 <a href="https://link.springer.com/article/10.1007/s10287-018-0338-5">Georghiou, Kuhn, and Wiesemann</a>。</p>
+<p>下面，我们举个LDR在多阶段鲁棒库存管理中的例子<a href="https://pubsonline.informs.org/doi/10.1287/opre.1090.0746">(See and Sim, 2010</a>,<a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2017.2952">Bertsimas, Sim, and Zhang, 2019)</a>。</p>
+<p>** 例2** 多阶段库存管理模型
+假如示例$\ref{example::single period inventory management}$中的小王每天都要定苹果。总共要定$T$天。所有的成本以都是波动的，也即都跟$t\in [T]$相关。假如第$t$天期早上的库存水平（inventory level）为$y_t$，那么第$t + 1$天的库存水平$y_{t + 1}$可以通过$y_t, x_t$和$d_t$得到：
+$$
+y_{t+1} = y_{t} + x_t - d_t.
+$$</p>
+<p>假设需求是随机因子$\tilde{\pmb z}$的函数
+$$
+d_t(\tilde{\pmb z}_t) = \tilde{z}_t + \alpha \tilde{z}_{t - 1} + \cdots + \alpha \tilde{z}_1 + \mu,
+$$
+其中，$\alpha \in [0,1], \tilde{\pmb z}_t := (\tilde{z}_1, \ldots, \tilde{z}_t)$，$\tilde{z}_t$为第$t$天的期望为零且两两互不相关(uncorrelated)的随机因子。那么，我们可以把小王这$T$天的问题写成如下鲁棒优化模型:
+$$
+\begin{array}{lll}
+\min, &amp; \displaystyle \sup_{\mathbb{P} \in \mathcal{P}} \mathbb{E}_{\mathbb{P}}{\sum_{t \in [T]} c_t x_t(\tilde{\pmb z}_{t - 1}) + v_{t}(\tilde{\pmb z}_{t}))}&amp;\\\
+\textrm{s.t.}  &amp; y_{t+1}(\pmb z_t) = y_{t}(\pmb z_{t - 1}) + x_t(\pmb z_{t - 1}) - d_t(\pmb z_{t}) &amp; \forall \pmb z \in \mathcal{W}, t \in [T];\\\
+&amp;v_t(\pmb z_t) \geq h_t y_{t + 1}(\pmb z_{t}) &amp; \forall \pmb z \in \mathcal{W}, t \in [T];\\\
+&amp;v_t(\pmb z_t) \geq -b_ty_{t + 1}(\pmb z_{t}) &amp; \forall \pmb z \in \mathcal{W}, t \in [T];\\\
+&amp;0 \leq x(\pmb z_{t - 1}) \leq \bar{x}_t &amp; \forall \pmb z \in \mathcal{W}, t \in [T];\\\
+&amp;x_t \in \mathcal{L}^{t - 1,1}, y_{t + 1} \in \mathcal{L}^{t,1}, v_t \in \mathcal{L}^{t,1} &amp; \forall t \in [T].
+\end{array}
+$$</p>
+<h2 id="拓展式线性决策规则extended-linear-decision-rule">拓展式线性决策规则(Extended linear decision rule)</h2>
+<p>在第.1.1中，我们介绍了基于广义矩信息的模糊集。其中，<a href="https://pubsonline.informs.org/doi/abs/10.1287/opre.2014.1314?journalCode=opre">Wiesemann, Kuhn and Sim, 2014</a>巧妙地引入了辅助随机变量$\tilde{\pmb u}$使得升维之后的模糊集（Lifted ambiguity set）中的约束皆化为线性约束，而将非线性部分转移到了支撑集中。相应地，在模型$\eqref{model::Two Stage Robust model1}$,如果假设$\pmb y$是$\pmb \xi$和$\pmb u$的仿射函数，也即
+$$
+\mathcal{L}^{I + J,N} = \bigg\{\pmb y \in \mathcal{R}^{I + J,N} \Big| \begin{array}{l}
+\exists \pmb y^0, \pmb y_i^1, \pmb y_j^2 \in \mathbb{R}^N, \forall i \in [I], j \in [J]:\\\
+\pmb y (\pmb \xi, \pmb u) = \pmb y^0 + \sum_{i\in[I]} \pmb y_i^1 \xi_i + \sum_{j\in[J]} \pmb y_j^2 u_j
+\end{array}\bigg\}.
+$$</p>
+<p>在线性规则下，模型$\eqref{model::Two Stage Robust model1}$可以写成
+$$
+\begin{align}
+Z^E = \min\ &amp; \pmb c^{\top} \pmb x + \sup_{\mathbb{P} \in \mathcal{P}}\mathbb{E}_{\mathbb{P}}{\pmb q^{\top}\pmb{y}(\tilde{\pmb  \xi},  \tilde{\pmb u})},\label{model::Two Stage Robust model ELDR}\\\
+\mathbf{s.t.}\ &amp;  \pmb A \pmb x = \pmb b;\notag\\\
+&amp;\pmb{T}(\pmb \xi)\pmb x + \pmb{W}\pmb y(\pmb \xi,  \tilde{\pmb u}) = \pmb h(\pmb \xi)  \forall \pmb \xi \in \mathcal{W};\notag\\\
+&amp;\pmb y \in \mathcal{L}^{I_1 + I_2,N_2},\pmb x \geq \pmb 0.\notag
+\end{align}
+$$
+由此，我们可以得到一个比LED更好的近似模型。</p>
+<p><strong>定理</strong> {theorem}
+$$
+Z^{*} \leq Z^E \leq Z^L$. \label{theorem::tighter upper bound}
+$$</p>
+<p>详细的证明请参考<a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2017.2952">Bertsimas, Sim, and Zhang, 2019</a>.</p>
+<h2 id="事件式近似法则event-wise-affine-recourse-approximation">事件式近似法则(Event-wise affine recourse approximation)</h2>
+<p><a href="https://pubsonline.informs.org/doi/abs/10.1287/mnsc.2020.3603">Chen, Sim, and Xiong, 2020</a>提出的鲁棒随机优化（Robust Stochastic Optimization, RSO）模型的统一框架。</p>
+<p>定义静态决策$\pmb{w} \in \mathbb{R}^{J_w}$，连续随机变量$\tilde{\pmb z}$， 和离散随机变量$\tilde{s}$。定义只取决于离散随机变量$\tilde{s}$的动态决策$\pmb{x}(s):[S] \mapsto \mathbb{R}^{J_x}$,以及同时取决于连续随机变量$\tilde{\pmb z}$和离散随机变量$\tilde{s}$的动态决策$\pmb{y}(s,\pmb{z}): [S] \times \mathbb{R}^{I_z} \mapsto \mathbb{R}^{J_y}$。与线性近似法则类似，对应离散随机变量的不同取值，动态决策$\pmb{y}(s,\pmb{z})$为连续随机变量$\tilde{\pmb z}$的不同的线性函数：
+$$
+\pmb{y}(s,\pmb{z})  := \pmb{y}^0(s) + \sum_{i \in [I_z]} \pmb{y}^i(s) z_i.
+$$
+其中，系数$\pmb{y}^0(s),\dots,\pmb{y}^{I_z}(s)$是最终模型的实际决策变量。</p>
+<p>定义线性映射
+$$
+\left\{
+\begin{array}{rll}
+\pmb{a}_m(s,\pmb{z})   &amp;:=&amp;   \pmb{a}_{ms}^0 + \sum_{i \in [I_z]} \pmb{a}_{ms}^i z_i \\\
+\pmb{b}_m(s,\pmb{z})   &amp;:=&amp;   \pmb{b}_{ms}^0 + \sum_{i \in [I_z]} \pmb{b}_{ms}^i z_i \\\
+\pmb{c}_m(s)   &amp;:= &amp;   \pmb{c}_{ms} \\\
+d_m(s,\pmb{z})  &amp;:= &amp;  d_{ms}^0 + \sum_{i \in [I_z]} d_{ms}^i z_i
+\end{array}
+\right. \forall m \in [M] \cup \{0\}.
+$$
+其中，参数维度如下
+$$
+\pmb{a}_{ms}^i \in \mathbb{R}^{J_w}, \pmb{b}_{ms}^i \in \mathbb{R}^{J_x}, \pmb{c}_{ms} \in \mathbb{R}^{J_y},  d_{ms}^i \in \mathbb{R} \forall i \in [I_z] \cup \{0\},  s \in [S].
+$$
+RSO模型的目标函数取分布集合$\mathcal{F}$（稍后介绍）下的最坏期望
+$$
+\sup_{\mathbb{P} \in \mathcal{F}} \mathbb{E}_{\mathbb{P}}{\pmb{a}^\prime_0(\tilde{s},\tilde{\pmb z})\pmb{w} + \pmb{b}^\prime_0(\tilde{s},\tilde{\pmb z})\pmb{x}(\tilde{s}) + \pmb{c}^\prime_0(\tilde{s})\pmb{y}(\tilde{s},\tilde{\pmb z}) + d_0(\tilde{s},\tilde{\pmb z})}.
+$$
+RSO模型主要包含两类约束。第一类“硬”线性约束($m \in \mathcal{M}_1$)为一般鲁棒约束，需要在随机变量任意可能的取值下均满足：
+$$
+\pmb{a}^\prime_m(s,\pmb{z})\pmb{w} + \pmb{b}^\prime_m(s,\pmb{z})\pmb{x}(s) + \pmb{c}^\prime_m(s)\pmb{y}(s,\pmb{z}) + d_m(s,\pmb{z}) \leq 0 \forall \pmb{z} \in  \mathcal{Z}_s,  s \in [S].
+$$
+第二类“软”线性约束($m \in \mathcal{M}_2$)与目标函数类似，考虑分布集合$\mathcal{F}$下的最坏期望，并要求该最坏期望不为正：
+$$
+\sup_{\mathbb{P} \in \mathcal{F}} \mathbb{E}_{\mathbb{P}}{\pmb{a}^\prime_m(\tilde{s},\tilde{\pmb z})\pmb{w} + \pmb{b}^\prime_m(\tilde{s},\tilde{\pmb z})\pmb{x}(\tilde{s}) + \pmb{c}^\prime_m(\tilde{s})\pmb{y}(\tilde{s},\tilde{\pmb z}) + d_m(\tilde{s},\tilde{\pmb z})} \leq 0 \forall m \in \mathcal{M}_2.
+$$
+除以上两类约束之外，在离散随机变量的不同取值下，RSO还包含非线性约束（如凸约束，整数约束等）
+$$
+\pmb{r}(s) := \left(\pmb{w},\pmb{x}(s),\pmb{y}^0(s),\dots,\pmb{y}^{I_z}(s) \right) \in \mathcal{X}_s \forall s \in [S],
+$$</p>
+<h3 id="事件式近似法则">事件式近似法则</h3>
+<p>记离散随机变量$\tilde{s}$的取值范围为$[S]$。特别地，离散随机变量$\tilde{s}$每一个取值$s$对应一个情景$s$。定义由情景组成的一个非空集合为一个事件$\mathcal{E} \subseteq [S]$。如此，全部情景的一个划分（partition?）定义了一个相互独立（mutually exclusive）又完全穷尽（collectively exhaustive）的MECE事件集合，记为$\mathcal{C}$。相应地，满足$\mathcal{H}_{\mathcal{C}}(s) = \mathcal{E}$ 函数$\mathcal{H}_{\mathcal{C}}:[S] \mapsto \mathcal{C}$确定了情景$s$在一个MECE事件集合中唯一所属的事件$\mathcal{E}$。</p>
+<p>给定一个MECE事件集合，事件式静态近似法则定义如下
+$$
+\mathcal{A}\left(\mathcal{C}\right)
+:= \left\{x : [S] \mapsto \mathbb{R} \left|
+\begin{array}{l}<br>
+x(s) =  x^\mathcal{E}, \mathcal{E} = \mathcal{H}_\mathcal{C}(s) \\\
+\mbox{for some } x^\mathcal{E} \in \mathbb{R}
+\end{array}\right. \right\};
+$$
+亦即，不同事件下，静态决策不同。</p>
+<p>类似地，事件式线性近似法则定义如下
+$$
+\bar{\mathcal{A}}\left(\mathcal{C}, \mathcal{I}\right) := \left\{ y : [S]  \times \mathbb{R}^{I_z}  \mapsto \mathbb{R} \left|
+\begin{array}{l}<br>
+y(s,\pmb{z}) =
+\displaystyle  y^0(s) + \sum_{i \in \mathcal{I}} y^i(s) z_i  \\\
+\mbox{for some } y^0, y^i \in \mathcal{A}(\mathcal{C}), i \in \mathcal I
+\end{array}\right. \right\}
+$$
+其中，信息集合$\mathcal I \subseteq [I_z]$为连续随机变量$\tilde{\pmb z}$的部分索引（components?），声明了连续随机变量$\tilde{\pmb z}$中，事件式线性近似法则所能线性依赖的成分。事件式线性近似法则声明了在不同事件下，动态决策不同，并且动态决策为连续随机变量$\tilde{\pmb z}$的线性函数。</p>
+<p>基于事件式近似法则，完整的RSO模型如下
+$$
+\begin{array}{cll}
+\min &amp;\displaystyle \sup_{\mathbb{P} \in \mathcal{F}} \mathbb{E}_{\mathbb{P}}{\pmb{a}^\prime_0(\tilde{s},\tilde{\pmb z})\pmb{w} + \pmb{b}^\prime_0(\tilde{s},\tilde{\pmb z})\pmb{x}(\tilde{s}) + \pmb{c}^\prime_0(\tilde{s})\pmb{y}(\tilde{s},\tilde{\pmb z}) + d_0(\tilde{s},\tilde{\pmb z})} \\\
+{\rm s.t.} &amp;
+\pmb{a}^\prime_m(s,\pmb{z})\pmb{w} + \pmb{b}^\prime_m(s,\pmb{z})\pmb{x}(s) + \pmb{c}^\prime_m(s)\pmb{y}(s,\pmb{z}) + d_m(s,\pmb{z}) \leq 0 &amp; \forall \pmb{z} \in  \mathcal{Z}_s,  s \in [S],  m \in \mathcal{M}_1 \\\
+&amp; \displaystyle \sup_{\mathbb{P} \in \mathcal{F}} \mathbb{E}_{\mathbb{P}}{\pmb{a}^\prime_m(\tilde{s},\tilde{\pmb z})\pmb{w} + \pmb{b}^\prime_m(\tilde{s},\tilde{\pmb z})\pmb{x}(\tilde{s}) + \pmb{c}^\prime_m(\tilde{s})\pmb{y}(\tilde{s},\tilde{\pmb z}) + d_m(\tilde{s},\tilde{\pmb z})} \leq 0 &amp; \forall m \in \mathcal{M}_2 \\\
+&amp;\left(\pmb{w},\pmb{x}(s),\pmb{y}^0(s),\dots,\pmb{y}^{I_z}(s) \right) \in \mathcal{X}_s &amp; \forall s \in [S]\\\
+&amp; x_j \in \mathcal{A}(\mathcal{C}^j_x) &amp; \forall j \in [J_x] \\\
+&amp; y_j \in \bar{\mathcal{A}}(\mathcal{C}^j_y, \mathcal{I}^j_y) &amp; \forall j \in [J_y].
+\end{array}
+$$
+其中，$\mathcal{C}^j_x, j \in [J_x]$， $\mathcal{C}^j_y, j \in [J_y]$为MECE事件集合, $\mathcal{I}^j_y, j \in [J_y]$为信息集合。</p>
+<h3 id="事件式分布模糊集">事件式分布模糊集</h3>
+<p>事件式分布模糊集刻画了连续随机变量$\tilde{\pmb z}$和离散随机变量$\tilde{s}$的联合分布的分布性质，包含了联合分布的分布信息。事件式分布模糊集取如下一般形式
+$$
+\label{eventwise_as}
+\mathcal{F} = \left\{\mathbb{P} \in \mathcal{P}_0\left(\mathbb{R}^{I_z} \times [S]\right)  \left\vert
+\begin{array}{ll}
+(\tilde{\pmb z},\tilde{s}) \sim \mathbb{P}\\\
+\mathbb{E}_{\mathbb{P}}[\tilde{\pmb z} \mid \tilde{s} \in \mathcal{E}_k] \in \mathcal{Q}_k &amp; \forall k \in [K] \\\
+\mathbb{P}[\tilde{\pmb z} \in \mathcal{Z}_s \mid \tilde{s} = s]  = 1 &amp; \forall s \in [S]  \\\
+\mathbb{P}[\tilde{s} = s]  = p_s &amp; \forall s \in [S]  \\\
+\mbox{for some } \pmb{p} \in \mathcal{P}<br>
+\end{array}
+\right.
+\right\}
+$$
+其中，$\mathcal{E}_k, k \in [K]$为不同事件（注意，这些事件不需要组成MECE事件集合），$\mathcal{Z}_s, s \in [S]$, $\mathcal{Q}_k, k \in [K]$, 和$\mathcal{P} \subseteq \{\pmb{p} \in \mathbb{R}^S_{++} \mid  \sum_{s \in [S]}p_s  = 1\}$为封闭的凸集合。事件式分布模糊集声明了
+(1) 不同事件（$\mathcal{E}_k$）下连续随机变量$\tilde{\pmb z}$的事件期望（即条件期望）。
+(2) 不同情景（$s$）下连续随机变量$\tilde{\pmb z}$的支撑集合（即条件支撑集合）。
+(3) 不同情景（$s$）发生的概率。</p>
+<p>不确定集合$\mathcal{Q}_k, k \in [K]$和$\mathcal{P} \subseteq \{\pmb{p} \in \mathbb{R}^S_{++} \mid  \sum_{s \in [S]}p_s  = 1\}$分别允许条件信息（1）和（3）亦可以是不确定的。</p>
+<p><a href="https://pubsonline.informs.org/doi/abs/10.1287/mnsc.2020.3603">Chen, Sim, and Xiong, 2020</a>证明了事件式分布模糊集有非常好的普适性。它可以描述随机优化中常用的确定的离散分布（deterministic discrete distribution），以及分布鲁棒优化中用到的不确定的离散分布（uncertain discrete distribution）, 确定的（或不确定的）混合分布（mixture distribution），基于矩信息的分布模糊集（moments ambiguity set），以及数据驱动下（1）基于机器学习聚类或分类算法的分布模糊集（K-means ambiguity set）与（2）基于Wasserstein距离的分布模糊集（Wasserstein ambiguity set）。</p>
+<h2 id="经典鲁棒优化转化">经典鲁棒优化转化</h2>
+<p>给定情景$s$，RSO模型中目标函数和“软（硬）”约束实际上是决策变量和连续随机变量$\tilde{\pmb z}$的取值$\pmb{z}$的双线性函数。因为，我们可以将它们方便地记为
+$$
+{\pmb{a}^\prime_m(s,\pmb{z})\pmb{w} + \pmb{b}^\prime_m(s,\pmb{z})\pmb{x}(s) + \pmb{c}^\prime_m(s)\pmb{y}(s,\pmb{z}) + d_m(s,\pmb{z})}   := \pmb{r}^\prime(s)\pmb{G}_m(s)\pmb{z} + h_m(s)    \forall m \in [M] \cup \{0\}.
+$$
+其中，$\pmb{G}_m(s)  \in  \mathbb{R}^{J_r \times I_z}$和 $h_m(s) \in \mathbb{R}$为参数。这样的双线性函数在事件式分布模糊集下的最坏期望可以通过求解一个经典鲁棒优化模型得到。换句话说，RSO模型可以很方便地通过的配套建模工具包进行建模。目前，<a href="https://pubsonline.informs.org/doi/abs/10.1287/mnsc.2020.3603">Chen, Sim, and Xiong, 2020</a>论文中所提到的建模工具包RSOME的<a href="https://sites.google.com/view/rsome/home%7D">MATLAB版本</a>和<a href="https://xiongpengnus.github.io/rsome/">Python 版本</a>都已经发布。读者可以下载进行测试，并通过用户手册中的实例学习RSO的应用场景。</p>
+<p><strong>定理</strong>
+{theorem}{模型等价转换}{thm:worst-case expectation}\label{thm:worst-case expectation}
+最坏期望
+$$
+\sup_{\mathbb{P} \in \mathcal{F}} \mathbb{E}_{\mathbb{P}}{\pmb{r}^\prime(\tilde{s})\pmb{G}_m(\tilde{s})\tilde{\pmb z} + h_m(\tilde{s}) }
+$$
+等于如下经典鲁棒优化模型的最优目标函数值
+$$
+\begin{array}{cll}
+\inf &amp; \gamma \\\
+{\rm s.t.} &amp; \gamma \geq \pmb{\alpha}^\prime\pmb{p} + \displaystyle \sum_{k \in [K]} \pmb{\beta}^\prime_k\pmb{\mu}_k &amp; \forall \pmb{p} \in \mathcal{P},  \dfrac{\pmb{\mu}_k}{\sum_{s \in \mathcal{E}_k} p_s} \in \mathcal{Q}_k,  k \in [K] \\\
+&amp; \alpha_s + \displaystyle \sum_{k \in \mathcal{K}_s} \pmb{\beta}_k^\prime\pmb{z}  \geq \pmb{r}^\prime(s)\pmb{G}_m(s)\pmb{z} + h_m(s) &amp; \forall \pmb{z} \in \mathcal{Z}_s,  s \in [S] \\\
+&amp; \gamma \in \mathbb{R},  \pmb{\alpha} \in \mathbb{R}^S,  \pmb{\beta}_k \in \mathbb{R}^{I_z} &amp; \forall k \in [K],
+\end{array}
+$$
+其中对每一个$s \in [S]$, $\mathcal{K}_s = \{k \in [K] \mid s \in \mathcal{E}_k\}$.</p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="" >
+    &copy;  鲁棒优化电子书 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
